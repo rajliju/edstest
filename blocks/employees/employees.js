@@ -1,42 +1,15 @@
 export default function decorate(block) {
-const ul = block.querySelector('ul');
-  
-  if (!ul) return;
-
-  // Get all li elements
-  const listItems = ul.querySelectorAll('li');
-  
-  // Create container div for table
-  const tableContainer = document.createElement('div');
-  tableContainer.className = 'table-container';
-
-  // Create header row
-  const headerRow = document.createElement('div');
-  headerRow.className = 'table-row header-row';
-  headerRow.innerHTML = `
-    <div class="table-cell header-cell">First Name</div>
-    <div class="table-cell header-cell">Last Name</div>
-    <div class="table-cell header-cell">Employee ID</div>
-  `;
-  tableContainer.append(headerRow);
-
-  // Convert each li to a table row
-  listItems.forEach((li) => {
-    const cells = li.querySelectorAll('.cards-card-body');
-    
-    const row = document.createElement('div');
-    row.className = 'table-row';
-
-    cells.forEach((cell) => {
-      const tableCell = document.createElement('div');
-      tableCell.className = 'table-cell';
-      tableCell.textContent = cell.textContent.trim();
-      row.append(tableCell);
+  /* change to ul, li */
+  const ul = document.createElement('ul');
+  [...block.children].forEach((row) => {
+    const li = document.createElement('li');
+    while (row.firstElementChild) li.append(row.firstElementChild);
+    [...li.children].forEach((div) => {
+      if (div.children.length === 1 && div.querySelector('picture')) div.className = 'cards-card-image';
+      else div.className = 'cards-card-body';
     });
-
-    tableContainer.append(row);
+    ul.append(li);
   });
-
-  // Replace ul with new table structure
-  ul.replaceWith(tableContainer);
+  ul.querySelectorAll('picture > img').forEach((img) => img.closest('picture').replaceWith(createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }])));
+  block.replaceChildren(ul);
 }
